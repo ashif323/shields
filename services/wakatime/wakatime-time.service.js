@@ -1,8 +1,7 @@
-import { BaseService, pathParams } from '../index.js'
+import { BaseSvgScrapingService, pathParams } from '../index.js'
 
-export default class WakaTimeBadge extends BaseService {
+export default class WakaTimeBadge extends BaseSvgScrapingService {
   static category = 'activity'
-
   static route = {
     base: 'wakatime',
     pattern: ':type(user|project)/:id',
@@ -33,31 +32,22 @@ export default class WakaTimeBadge extends BaseService {
     color: 'blue',
   }
 
+  static render({ message }) {
+    return { message, color: 'blue' }
+  }
+
   async fetch({ type, id }) {
     const url = `https://wakatime.com/badge/${type}/${id}.svg`
     const { buffer } = await this._request({ url })
-    return buffer.toString()
-  }
-
-  extractTime(svg) {
-    const match = svg.match(/>([\d,]+\s+hrs?.*?)</i)
-    return match ? match[1] : null
+    return { buffer }
   }
 
   async handle({ type, id }) {
-    const svg = await this.fetch({ type, id })
-    const time = this.extractTime(svg)
-
-    if (!time) {
-      return this.constructor.render({
-        message: 'invalid',
-        color: 'red',
-      })
+    const { buffer } = await this.fetch({ type, id })
+    const match = buffer.match(/>([\d,]+\s+hrs?.*?)</i)
+    if (!match) {
+      return { message: 'invalid', color: 'red' }
     }
-
-    return this.constructor.render({
-      message: time,
-      color: 'blue',
-    })
+    return this.constructor.render({ message: match[1] })
   }
 }

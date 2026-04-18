@@ -11,16 +11,17 @@ export default class WakaTimeBadge extends BaseSvgScrapingService {
     '/wakatime/{type}/{id}': {
       get: {
         summary: 'WakaTime coding time badge',
-        parameters: [
-          ...pathParams({
+        parameters: pathParams(
+          {
             name: 'type',
             example: 'user',
-          }),
-          ...pathParams({
+            schema: { type: 'string', enum: ['user', 'project'] },
+          },
+          {
             name: 'id',
             example: '73d84531-5bb3-4938-91c9-5ca9e6507df9',
-          }),
-        ],
+          },
+        ),
       },
     },
   }

@@ -15,7 +15,7 @@ export default class WakaTimeBadge extends BaseSvgScrapingService {
           {
             name: 'type',
             example: 'user',
-            schema: { type: 'string', enum: ['user', 'project'] },
+            schema: { type: 'string', enum: this.getEnum('type') },
           },
           {
             name: 'id',
